@@ -1,0 +1,28 @@
+[package]
+name = "db-migrate-backend"
+version = "0.1.0"
+description = "DB Migrate Backend - Safe PostgreSQL Database Migration Utility"
+authors = ["DB Migrate Team"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2.0.5", features = [] }
+
+[dependencies]
+tauri = { version = "2.2.0", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.38", features = ["full"] }
+tokio-postgres = { version = "0.7.10", features = ["with-chrono-0_4"] }
+postgres-types = "0.2"
+regex = "1.10"
+chrono = { version = "0.4", features = ["serde"] }
+tempfile = "3.10"
+dirs-next = "2.0"
+uuid = { version = "1.10", features = ["v4", "serde"] }
+which = "6.0"
+url = "2.5"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
