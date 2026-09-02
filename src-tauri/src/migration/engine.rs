@@ -1,7 +1,6 @@
-use crate::postgres::connection::{ConnectionTester, SafeDatabaseIdentity};
-use crate::postgres::discovery::{PostgresTool, ToolDiscoverer, ToolchainSelection};
+use crate::postgres::connection::ConnectionTester;
+use crate::postgres::discovery::ToolDiscoverer;
 use crate::postgres::dump::DumpExecutor;
-use crate::postgres::inspection::{DatabaseInspection, Inspector};
 use crate::postgres::restore::RestoreExecutor;
 use crate::postgres::verification::{VerificationMode, VerificationStatus, VerificationSummary, Verifier};
 use crate::security::credential::ParsedPostgresUrl;

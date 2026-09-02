@@ -7,13 +7,13 @@ pub mod security;
 use commands::AppState;
 use history::HistoryStore;
 use migration::engine::MigrationEngine;
-use std::sync::Mutex;
+use std::sync::Arc;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .manage(AppState {
-            engine: Mutex::new(MigrationEngine::new()),
+            engine: Arc::new(MigrationEngine::new()),
             history: HistoryStore::new(),
         })
         .invoke_handler(tauri::generate_handler![

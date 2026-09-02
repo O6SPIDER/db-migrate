@@ -5,11 +5,11 @@ use crate::postgres::discovery::{ToolDiscoverer, ToolchainSelection};
 use crate::postgres::inspection::{DatabaseInspection, Inspector};
 use crate::postgres::verification::{VerificationMode, VerificationSummary, Verifier};
 use crate::security::credential::ParsedPostgresUrl;
-use std::sync::Mutex;
+use std::sync::Arc;
 use tauri::State;
 
 pub struct AppState {
-    pub engine: Mutex<MigrationEngine>,
+    pub engine: Arc<MigrationEngine>,
     pub history: HistoryStore,
 }
 
@@ -47,8 +47,6 @@ pub async fn run_migration(
 ) -> Result<MigrationReport, String> {
     let report = state
         .engine
-        .lock()
-        .map_err(|e| e.to_string())?
         .run_migration(app, source_url, dest_url, keep_backup)
         .await?;
 
@@ -58,8 +56,8 @@ pub async fn run_migration(
 }
 
 #[tauri::command]
-pub fn cancel_migration(state: State<'_, AppState>) -> Result<(), String> {
-    state.engine.lock().map_err(|e| e.to_string())?.cancel();
+pub async fn cancel_migration(state: State<'_, AppState>) -> Result<(), String> {
+    state.engine.cancel();
     Ok(())
 }
 

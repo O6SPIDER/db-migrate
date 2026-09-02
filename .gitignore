@@ -1,0 +1,82 @@
+
+# Dependencies
+
+node_modules/
+.pnpm-store/
+
+
+# Frontend build outputs
+
+
+dist/
+build/
+.vite/
+coverage/
+
+
+# Tauri / Rust build outputs
+
+
+src-tauri/target/
+src-tauri/target-warning-check/
+target/
+
+# Local Cargo configuration
+src-tauri/.cargo/
+
+
+# Environment files
+
+
+.env
+.env.*
+!.env.example
+
+
+# Logs
+
+
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# Temporary files
+
+
+*.tmp
+tmp/
+temp/
+
+# OS files
+
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+
+# Editors / IDEs
+
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+
+# Rust temporary / generated files
+
+
+**/*.rs.bk
+
+
+# Keep lockfiles tracked
+
+
+# DO NOT ignore these:
+# pnpm-lock.yaml
+# Cargo.lock
+# package-lock.json

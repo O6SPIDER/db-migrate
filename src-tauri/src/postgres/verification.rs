@@ -13,8 +13,10 @@ pub enum VerificationMode {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum VerificationStatus {
     VERIFIED,
-    VERIFIED_WITH_WARNINGS,
-    FAILED_VERIFICATION,
+    #[serde(rename = "VERIFIED_WITH_WARNINGS")]
+    VerifiedWithWarnings,
+    #[serde(rename = "FAILED_VERIFICATION")]
+    FailedVerification,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -123,15 +125,15 @@ impl Verifier {
         let status = if tables_match && schemas_match && all_tables_matched && warnings.is_empty() {
             VerificationStatus::VERIFIED
         } else if tables_match && schemas_match {
-            VerificationStatus::VERIFIED_WITH_WARNINGS
+            VerificationStatus::VerifiedWithWarnings
         } else {
-            VerificationStatus::FAILED_VERIFICATION
+            VerificationStatus::FailedVerification
         };
 
         let message = match status {
             VerificationStatus::VERIFIED => "Destination schema and object counts perfectly match source database.".to_string(),
-            VerificationStatus::VERIFIED_WITH_WARNINGS => "Migration completed with minor non-critical structural warnings.".to_string(),
-            VerificationStatus::FAILED_VERIFICATION => "Migration completed, but verification detected schema or object count discrepancies.".to_string(),
+            VerificationStatus::VerifiedWithWarnings => "Migration completed with minor non-critical structural warnings.".to_string(),
+            VerificationStatus::FailedVerification => "Migration completed, but verification detected schema or object count discrepancies.".to_string(),
         };
 
         Ok(VerificationSummary {
