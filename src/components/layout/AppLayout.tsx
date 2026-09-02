@@ -9,6 +9,7 @@ import {
   PanelLeftOpen,
 } from 'lucide-react';
 import { ToolchainSelection } from '../../types/migration';
+import appIcon from '../../assets/app-icon.png';
 
 interface AppLayoutProps {
   activeTab: 'migration' | 'history' | 'settings';
@@ -47,7 +48,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <div className="h-16 px-4 border-b border-[#1f1f1f] flex items-center overflow-hidden">
             {!isCollapsed ? (
               <div className="flex items-center gap-2.5 px-1 min-w-0">
-                <Database className="w-5 h-5 text-blue-400 shrink-0" strokeWidth={2} />
+                <img src={appIcon} alt="DB Migrate" className="w-6 h-6 object-contain shrink-0 rounded" />
                 <div className="min-w-0 transition-all duration-300">
                   <h1 className="text-sm font-bold text-white tracking-tight leading-tight truncate">
                     DB Migrate
@@ -59,7 +60,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               </div>
             ) : (
               <div className="w-full flex items-center justify-center">
-                <Database className="w-5 h-5 text-blue-400 shrink-0" strokeWidth={2} />
+                <img src={appIcon} alt="DB Migrate" className="w-6 h-6 object-contain shrink-0 rounded mx-auto" />
               </div>
             )}
           </div>
