@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
-  CheckCircle2,
+  Check,
   Clock,
   Terminal,
   Copy,
-  Check,
   AlertOctagon,
   ChevronDown,
   ChevronUp,
+  Circle,
 } from 'lucide-react';
 import { MigrationStage, LogEvent } from '../../types/migration';
 
@@ -19,6 +19,31 @@ interface MigrationProgressProps {
   onCancel: () => void;
 }
 
+const STAGES: { stage: MigrationStage; label: string }[] = [
+  { stage: 'PREFLIGHT', label: 'Preparing' },
+  { stage: 'DUMPING', label: 'Creating backup' },
+  { stage: 'RESTORING', label: 'Restoring' },
+  { stage: 'VERIFYING', label: 'Verifying' },
+  { stage: 'COMPLETED', label: 'Complete' },
+];
+
+const getStageIndex = (s: MigrationStage) => {
+  switch (s) {
+    case 'PREFLIGHT':
+      return 0;
+    case 'DUMPING':
+      return 1;
+    case 'RESTORING':
+      return 2;
+    case 'VERIFYING':
+      return 3;
+    case 'COMPLETED':
+      return 4;
+    default:
+      return 0;
+  }
+};
+
 export const MigrationProgress: React.FC<MigrationProgressProps> = ({
   currentStage,
   activityText,
@@ -28,31 +53,6 @@ export const MigrationProgress: React.FC<MigrationProgressProps> = ({
 }) => {
   const [logsOpen, setLogsOpen] = useState(true);
   const [copied, setCopied] = useState(false);
-
-  const stages: { stage: MigrationStage; label: string }[] = [
-    { stage: 'PREFLIGHT', label: 'Preparing' },
-    { stage: 'DUMPING', label: 'Creating Backup' },
-    { stage: 'RESTORING', label: 'Restoring Database' },
-    { stage: 'VERIFYING', label: 'Verifying Destination' },
-    { stage: 'COMPLETED', label: 'Complete' },
-  ];
-
-  const getStageIndex = (s: MigrationStage) => {
-    switch (s) {
-      case 'PREFLIGHT':
-        return 0;
-      case 'DUMPING':
-        return 1;
-      case 'RESTORING':
-        return 2;
-      case 'VERIFYING':
-        return 3;
-      case 'COMPLETED':
-        return 4;
-      default:
-        return 0;
-    }
-  };
 
   const currentIndex = getStageIndex(currentStage);
 
@@ -70,117 +70,129 @@ export const MigrationProgress: React.FC<MigrationProgressProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header & Stage Stepper */}
-      <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-6 shadow-sm space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-gray-100">Migration in Progress</h2>
-            <p className="text-xs text-gray-400 font-mono mt-0.5">{activityText}</p>
+    <div className="max-w-4xl mx-auto space-y-4">
+      {/* Header & Stage Rail */}
+      <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-6 space-y-6">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-gray-100">Migration in progress</h2>
+            <p className="text-xs text-gray-500 font-mono mt-0.5 truncate">{activityText}</p>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 bg-[#090a0f] border border-[#1e2433] px-3 py-1.5 rounded-lg text-xs font-mono text-gray-300">
-              <Clock className="w-3.5 h-3.5 text-blue-400" />
-              <span>Elapsed: {formatElapsed(elapsedSeconds)}</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2 bg-black/25 border border-[#1a1d26] px-3 py-1.5 rounded-lg text-xs font-mono text-gray-300">
+              <Clock className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} />
+              <span>{formatElapsed(elapsedSeconds)}</span>
             </div>
 
             <button
               type="button"
               onClick={onCancel}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 text-red-300 transition-all flex items-center space-x-1.5"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 hover:bg-red-500/15 border border-red-800/50 text-red-300 transition-colors flex items-center gap-1.5"
             >
-              <AlertOctagon className="w-3.5 h-3.5" />
-              <span>Cancel Migration</span>
+              <AlertOctagon className="w-3.5 h-3.5" strokeWidth={2} />
+              <span>Cancel</span>
             </button>
           </div>
         </div>
 
-        {/* Visual Stepper */}
-        <div className="grid grid-cols-5 gap-2 pt-2">
-          {stages.map((st, idx) => {
+        {/* Compact step rail — same visual grammar as the top-level pipeline stepper */}
+        <div className="flex items-center">
+          {STAGES.map((st, idx) => {
             const isDone = idx < currentIndex;
             const isCurrent = idx === currentIndex;
+            const isLast = idx === STAGES.length - 1;
 
             return (
-              <div key={st.stage} className="space-y-2">
-                <div
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    isDone
-                      ? 'bg-emerald-500'
-                      : isCurrent
-                      ? 'bg-blue-500 animate-pulse'
-                      : 'bg-[#1e2433]'
-                  }`}
-                />
-                <div className="flex items-center space-x-1.5 text-xs font-mono">
-                  {isDone ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  ) : isCurrent ? (
-                    <span className="w-3.5 h-3.5 rounded-full border-2 border-blue-400 border-t-transparent animate-spin shrink-0" />
-                  ) : (
-                    <span className="w-3.5 h-3.5 rounded-full border border-gray-600 shrink-0" />
-                  )}
+              <React.Fragment key={st.stage}>
+                <div className="flex flex-col items-center gap-2 shrink-0">
+                  <div
+                    className={[
+                      'w-7 h-7 rounded-full flex items-center justify-center border transition-colors duration-300',
+                      isDone && 'bg-blue-500/15 border-blue-500/50 text-blue-400',
+                      isCurrent && 'bg-blue-600 border-blue-500 text-white shadow-[0_0_0_4px_rgba(59,130,246,0.15)]',
+                      !isDone && !isCurrent && 'bg-[#161922] border-[#262b36] text-gray-600',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {isDone ? (
+                      <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
+                    ) : isCurrent ? (
+                      <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                    ) : (
+                      <Circle className="w-2 h-2 fill-current" strokeWidth={0} />
+                    )}
+                  </div>
                   <span
-                    className={`truncate ${
-                      isDone
-                        ? 'text-emerald-400 font-medium'
-                        : isCurrent
-                        ? 'text-blue-400 font-semibold'
-                        : 'text-gray-500'
-                    }`}
+                    className={[
+                      'text-[11px] font-medium whitespace-nowrap',
+                      isCurrent ? 'text-gray-100' : isDone ? 'text-blue-400' : 'text-gray-600',
+                    ].join(' ')}
                   >
                     {st.label}
                   </span>
                 </div>
-              </div>
+
+                {!isLast && (
+                  <div
+                    className={[
+                      'h-px flex-1 mx-2 mb-5 transition-colors duration-300',
+                      idx < currentIndex ? 'bg-blue-500/50' : 'bg-[#1a1d26]',
+                    ].join(' ')}
+                  />
+                )}
+              </React.Fragment>
             );
           })}
         </div>
       </div>
 
       {/* Live Log Viewer */}
-      <div className="bg-[#11131a] border border-[#1e2433] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl overflow-hidden">
         <div
           onClick={() => setLogsOpen(!logsOpen)}
-          className="p-4 bg-[#0d0f17] border-b border-[#1e2433] flex items-center justify-between cursor-pointer hover:bg-[#141824] transition-colors select-none"
+          className="p-4 bg-[#0a0b10] border-b border-[#1a1d26] flex items-center justify-between cursor-pointer hover:bg-[#0d0f16] transition-colors select-none"
         >
-          <div className="flex items-center space-x-2.5">
-            <Terminal className="w-4 h-4 text-blue-400" />
-            <h3 className="text-xs font-semibold text-gray-200 font-mono">Sanitized Live Migration Log</h3>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/40">
+          <div className="flex items-center gap-2.5">
+            <Terminal className="w-4 h-4 text-blue-400" strokeWidth={2} />
+            <h3 className="text-xs font-semibold text-gray-200">Live migration log</h3>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-800/40 text-blue-400">
+              <Circle className="w-1.5 h-1.5 fill-current" strokeWidth={0} />
               {logs.length} events
             </span>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 handleCopyLogs();
               }}
-              className="px-2.5 py-1 rounded bg-[#1b202e] hover:bg-[#252c3f] border border-[#2b344a] text-gray-300 text-[11px] font-mono flex items-center space-x-1 transition-all"
+              className="px-2.5 py-1 rounded-md bg-[#161922] hover:bg-[#1c202b] border border-[#262b36] text-gray-300 text-[11px] font-mono flex items-center gap-1 transition-colors"
             >
-              {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-              <span>{copied ? 'Copied!' : 'Copy Log'}</span>
+              {copied ? <Check className="w-3 h-3 text-emerald-400" strokeWidth={2} /> : <Copy className="w-3 h-3" strokeWidth={2} />}
+              <span>{copied ? 'Copied' : 'Copy log'}</span>
             </button>
 
-            {logsOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+            {logsOpen ? (
+              <ChevronUp className="w-4 h-4 text-gray-500" strokeWidth={2} />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-gray-500" strokeWidth={2} />
+            )}
           </div>
         </div>
 
         {logsOpen && (
-          <div className="p-4 bg-[#090a0f] font-mono text-xs text-gray-300 max-h-96 overflow-y-auto space-y-1.5">
+          <div className="p-4 bg-black/30 font-mono text-xs text-gray-300 max-h-96 overflow-y-auto space-y-1">
             {logs.length === 0 ? (
-              <p className="text-gray-500 italic text-[11px]">Awaiting initial child process events...</p>
+              <p className="text-gray-600 text-[11px]">Waiting for the first log event…</p>
             ) : (
               logs.map((log, index) => (
-                <div key={index} className="flex items-start space-x-3 hover:bg-[#11131a] px-1 py-0.5 rounded">
-                  <span className="text-gray-500 shrink-0 select-none text-[11px]">
-                    [{log.timestamp}]
-                  </span>
-                  <span className="leading-relaxed break-all text-[11px]">{log.message}</span>
+                <div key={index} className="flex items-start gap-3 hover:bg-white/[0.02] px-1 py-0.5 rounded">
+                  <span className="text-gray-600 shrink-0 select-none text-[11px]">[{log.timestamp}]</span>
+                  <span className="leading-relaxed break-all text-[11px] text-gray-300">{log.message}</span>
                 </div>
               ))
             )}

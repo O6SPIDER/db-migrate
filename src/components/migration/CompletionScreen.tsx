@@ -9,6 +9,8 @@ import {
   FileText,
   HardDrive,
   RefreshCw,
+  Clock,
+  Tag
 } from 'lucide-react';
 import { MigrationReport } from '../../types/migration';
 
@@ -18,6 +20,21 @@ interface CompletionScreenProps {
   isDeepVerifying: boolean;
   onReset: () => void;
 }
+
+const StatTile: React.FC<{ icon: React.ElementType; label: string; children: React.ReactNode; tone?: string }> = ({
+  icon: Icon,
+  label,
+  children,
+  tone = 'text-gray-100',
+}) => (
+  <div className="bg-black/25 p-3 rounded-lg border border-[#1a1d26] space-y-1">
+    <div className="flex items-center gap-1.5 text-gray-600">
+      <Icon className="w-3 h-3" strokeWidth={2} />
+      <span className="text-[10px]">{label}</span>
+    </div>
+    <span className={`text-sm font-semibold block font-mono ${tone}`}>{children}</span>
+  </div>
+);
 
 export const CompletionScreen: React.FC<CompletionScreenProps> = ({
   report,
@@ -72,38 +89,39 @@ export const CompletionScreen: React.FC<CompletionScreenProps> = ({
   const isWarning = report.status === 'VERIFIED_WITH_WARNINGS';
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4">
       {/* Header Result Card */}
-      <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3.5">
+      <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-6 space-y-5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              className={[
+                'w-10 h-10 rounded-lg flex items-center justify-center border shrink-0',
                 isVerified
-                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                  ? 'bg-emerald-500/10 border-emerald-700/40 text-emerald-400'
                   : isWarning
-                  ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400'
-                  : 'bg-red-500/10 border border-red-500/20 text-red-400'
-              }`}
+                  ? 'bg-amber-500/10 border-amber-700/40 text-amber-400'
+                  : 'bg-red-500/10 border-red-700/40 text-red-400',
+              ].join(' ')}
             >
               {isVerified ? (
-                <CheckCircle2 className="w-5 h-5" />
+                <CheckCircle2 className="w-5 h-5" strokeWidth={2} />
               ) : isWarning ? (
-                <AlertTriangle className="w-5 h-5" />
+                <AlertTriangle className="w-5 h-5" strokeWidth={2} />
               ) : (
-                <XCircle className="w-5 h-5" />
+                <XCircle className="w-5 h-5" strokeWidth={2} />
               )}
             </div>
 
             <div>
-              <h2 className="text-base font-semibold text-gray-100">
+              <h2 className="text-base font-semibold text-gray-100 leading-tight">
                 {isVerified
-                  ? 'Migration Complete & Verified'
+                  ? 'Migration complete and verified'
                   : isWarning
-                  ? 'Migration Completed with Warnings'
-                  : 'Migration Verification Failed'}
+                  ? 'Migration completed with warnings'
+                  : 'Migration verification failed'}
               </h2>
-              <p className="text-xs text-gray-400 font-mono mt-0.5">
+              <p className="text-xs text-gray-500 font-mono mt-1">
                 {report.source_dbname} → {report.destination_dbname}
               </p>
             </div>
@@ -112,112 +130,102 @@ export const CompletionScreen: React.FC<CompletionScreenProps> = ({
           <button
             type="button"
             onClick={onReset}
-            className="px-4 py-2 rounded-lg text-xs font-medium bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-sm flex items-center space-x-2"
+            className="px-4 py-2 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition-colors shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] flex items-center gap-2 shrink-0"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Start Another Migration</span>
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={2} />
+            <span>Start another migration</span>
           </button>
         </div>
 
         {/* Overview Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-          <div className="bg-[#090a0f] p-3 rounded-lg border border-[#1e2433]">
-            <span className="text-[10px] text-gray-400 font-mono block">TOTAL DURATION</span>
-            <span className="text-sm font-semibold text-gray-100 font-mono mt-0.5 block">
-              {formatDuration(report.duration_seconds)}
-            </span>
-          </div>
-
-          <div className="bg-[#090a0f] p-3 rounded-lg border border-[#1e2433]">
-            <span className="text-[10px] text-gray-400 font-mono block">TRANSFERRED SIZE</span>
-            <span className="text-sm font-semibold text-gray-100 mt-0.5 block">
-              {report.dump_size_formatted}
-            </span>
-          </div>
-
-          <div className="bg-[#090a0f] p-3 rounded-lg border border-[#1e2433]">
-            <span className="text-[10px] text-gray-400 font-mono block">PG_DUMP VERSION</span>
-            <span className="text-sm font-semibold text-gray-100 font-mono mt-0.5 block">
-              v{report.pg_dump_version}
-            </span>
-          </div>
-
-          <div className="bg-[#090a0f] p-3 rounded-lg border border-[#1e2433]">
-            <span className="text-[10px] text-gray-400 font-mono block">VERIFICATION MODE</span>
-            <span className="text-sm font-semibold text-emerald-400 font-mono mt-0.5 block">
-              {verSummary.mode}
-            </span>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <StatTile icon={Clock} label="Total duration">
+            {formatDuration(report.duration_seconds)}
+          </StatTile>
+          <StatTile icon={HardDrive} label="Transferred size">
+            {report.dump_size_formatted}
+          </StatTile>
+          <StatTile icon={Tag} label="pg_dump version">
+            v{report.pg_dump_version}
+          </StatTile>
+          <StatTile icon={ShieldCheck} label="Verification mode" tone="text-emerald-400">
+            {verSummary.mode}
+          </StatTile>
         </div>
       </div>
 
       {/* Structural Object Comparison */}
-      <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-xs font-semibold text-gray-200 uppercase tracking-wider font-mono">
-              Database Objects Verification
-            </h3>
+      <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" strokeWidth={2} />
+            <h3 className="text-xs font-semibold text-gray-200">Database objects verification</h3>
           </div>
 
           <button
             type="button"
             onClick={onRunDeepVerification}
             disabled={isDeepVerifying || verSummary.mode === 'DEEP'}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#161a26] border border-[#272e42] hover:bg-[#202638] text-gray-300 hover:text-white transition-all shadow-sm flex items-center space-x-1.5 disabled:opacity-50"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#161922] border border-[#262b36] hover:bg-[#1c202b] text-gray-300 hover:text-white transition-colors flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isDeepVerifying ? 'animate-spin' : ''}`} />
-            <span>{verSummary.mode === 'DEEP' ? 'Deep Verified' : 'Run Deep Verification'}</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${isDeepVerifying ? 'animate-spin' : ''}`} strokeWidth={2} />
+            <span>{verSummary.mode === 'DEEP' ? 'Deep verified' : 'Run deep verification'}</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
-          <div className="bg-[#090a0f] p-2.5 rounded border border-[#1e2433] flex justify-between items-center">
-            <span className="text-gray-400">Schemas</span>
-            <span className="text-emerald-400 font-medium">Verified ✓</span>
-          </div>
-          <div className="bg-[#090a0f] p-2.5 rounded border border-[#1e2433] flex justify-between items-center">
-            <span className="text-gray-400">Tables</span>
-            <span className="text-emerald-400 font-medium">Verified ✓</span>
-          </div>
-          <div className="bg-[#090a0f] p-2.5 rounded border border-[#1e2433] flex justify-between items-center">
-            <span className="text-gray-400">Indexes</span>
-            <span className="text-emerald-400 font-medium">Verified ✓</span>
-          </div>
-          <div className="bg-[#090a0f] p-2.5 rounded border border-[#1e2433] flex justify-between items-center">
-            <span className="text-gray-400">Foreign Keys</span>
-            <span className="text-emerald-400 font-medium">Verified ✓</span>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {['Schemas', 'Tables', 'Indexes', 'Foreign keys'].map((item) => (
+            <div
+              key={item}
+              className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] flex justify-between items-center"
+            >
+              <span className="text-xs text-gray-500">{item}</span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 font-medium">
+                <CheckCircle2 className="w-3 h-3" strokeWidth={2} />
+                Verified
+              </span>
+            </div>
+          ))}
         </div>
 
         {/* Table by Table Row Count Breakdown */}
         {verSummary.tables.length > 0 && (
-          <div className="pt-2">
-            <h4 className="text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-2">
-              Table Row Counts ({verSummary.mode} Mode)
-            </h4>
-            <div className="bg-[#090a0f] border border-[#1e2433] rounded-lg overflow-hidden max-h-60 overflow-y-auto">
+          <div className="pt-1">
+            <div className="flex items-center gap-2 mb-2">
+              <h4 className="text-[11px] font-medium text-gray-500">Table row counts</h4>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-black/25 border border-[#1a1d26] text-gray-500">
+                {verSummary.mode}
+              </span>
+            </div>
+            <div className="bg-black/25 border border-[#1a1d26] rounded-lg overflow-hidden max-h-60 overflow-y-auto">
               <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-[#0d0f17] text-gray-400 border-b border-[#1e2433] sticky top-0">
+                <thead className="bg-[#0a0b10] text-gray-500 border-b border-[#1a1d26] sticky top-0">
                   <tr>
-                    <th className="p-2.5 font-medium">Table Name</th>
-                    <th className="p-2.5 font-medium">Source Rows</th>
-                    <th className="p-2.5 font-medium">Destination Rows</th>
+                    <th className="p-2.5 font-medium">Table</th>
+                    <th className="p-2.5 font-medium">Source rows</th>
+                    <th className="p-2.5 font-medium">Destination rows</th>
                     <th className="p-2.5 font-medium text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1e2433] text-gray-300">
+                <tbody className="divide-y divide-[#1a1d26] text-gray-300">
                   {verSummary.tables.map((t, idx) => (
-                    <tr key={idx} className="hover:bg-[#121520]">
-                      <td className="p-2.5 font-medium text-gray-200">{t.schema_name}.{t.table_name}</td>
+                    <tr key={idx} className="hover:bg-white/[0.02]">
+                      <td className="p-2.5 font-medium text-gray-200">
+                        {t.schema_name}.{t.table_name}
+                      </td>
                       <td className="p-2.5">{t.source_count.toLocaleString()}</td>
                       <td className="p-2.5">{t.dest_count.toLocaleString()}</td>
                       <td className="p-2.5 text-right">
                         {t.matched ? (
-                          <span className="text-emerald-400 font-semibold">Match ✓</span>
+                          <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold">
+                            <CheckCircle2 className="w-3 h-3" strokeWidth={2} />
+                            Match
+                          </span>
                         ) : (
-                          <span className="text-amber-400 font-semibold">Diff ⚠</span>
+                          <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
+                            <AlertTriangle className="w-3 h-3" strokeWidth={2} />
+                            Diff
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -232,69 +240,69 @@ export const CompletionScreen: React.FC<CompletionScreenProps> = ({
       {/* Backup Retention & Export Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Backup Retention */}
-        <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-5 space-y-3">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-gray-200 font-mono">
-            <HardDrive className="w-4 h-4 text-blue-400" />
-            <span>Temporary Backup Retention</span>
+        <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-200">
+            <HardDrive className="w-4 h-4 text-blue-400" strokeWidth={2} />
+            <span>Temporary backup retention</span>
           </div>
 
-          <p className="text-xs text-gray-400">
-            Choose whether to delete or keep the generated local custom dump file.
+          <p className="text-[11px] text-gray-500 leading-relaxed">
+            Choose whether to delete or keep the generated local dump file.
           </p>
 
-          <div className="space-y-2 pt-1 text-xs">
-            <label className="flex items-center space-x-2.5 cursor-pointer">
+          <div className="space-y-2 pt-1">
+            <label className="flex items-center gap-2.5 cursor-pointer">
               <input
                 type="radio"
                 name="backup-choice"
                 checked={deleteBackup}
                 onChange={() => setDeleteBackup(true)}
-                className="text-blue-600 focus:ring-blue-500"
+                className="w-3.5 h-3.5 text-blue-600 bg-black/30 border-[#262b36] focus:ring-1 focus:ring-blue-500/40 focus:ring-offset-0"
               />
-              <span className="text-gray-300">Delete temporary backup archive (Recommended)</span>
+              <span className="text-xs text-gray-300">Delete temporary backup archive (recommended)</span>
             </label>
 
-            <label className="flex items-center space-x-2.5 cursor-pointer">
+            <label className="flex items-center gap-2.5 cursor-pointer">
               <input
                 type="radio"
                 name="backup-choice"
                 checked={!deleteBackup}
                 onChange={() => setDeleteBackup(false)}
-                className="text-blue-600 focus:ring-blue-500"
+                className="w-3.5 h-3.5 text-blue-600 bg-black/30 border-[#262b36] focus:ring-1 focus:ring-blue-500/40 focus:ring-offset-0"
               />
-              <span className="text-gray-300">Keep temporary backup file</span>
+              <span className="text-xs text-gray-300">Keep temporary backup file</span>
             </label>
           </div>
         </div>
 
         {/* Export Reports */}
-        <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-5 space-y-3">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-gray-200 font-mono">
-            <FileText className="w-4 h-4 text-purple-400" />
-            <span>Export Migration Report</span>
+        <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-200">
+            <FileText className="w-4 h-4 text-purple-400" strokeWidth={2} />
+            <span>Export migration report</span>
           </div>
 
-          <p className="text-xs text-gray-400">
-            Export a sanitized audit report containing timestamps, duration, and object counts.
+          <p className="text-[11px] text-gray-500 leading-relaxed">
+            Export a sanitized audit report with timestamps, duration, and object counts.
           </p>
 
-          <div className="flex items-center space-x-2 pt-1">
+          <div className="flex items-center gap-2 pt-1">
             <button
               type="button"
               onClick={exportJsonReport}
-              className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#161a26] border border-[#272e42] hover:bg-[#202638] text-gray-200 hover:text-white transition-all shadow-sm flex items-center justify-center space-x-1.5"
+              className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#161922] border border-[#262b36] hover:bg-[#1c202b] text-gray-200 hover:text-white transition-colors flex items-center justify-center gap-1.5"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export JSON Report</span>
+              <Download className="w-3.5 h-3.5" strokeWidth={2} />
+              <span>JSON report</span>
             </button>
 
             <button
               type="button"
               onClick={exportTextReport}
-              className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#161a26] border border-[#272e42] hover:bg-[#202638] text-gray-200 hover:text-white transition-all shadow-sm flex items-center justify-center space-x-1.5"
+              className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#161922] border border-[#262b36] hover:bg-[#1c202b] text-gray-200 hover:text-white transition-colors flex items-center justify-center gap-1.5"
             >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Export Text Report</span>
+              <FileText className="w-3.5 h-3.5" strokeWidth={2} />
+              <span>Text report</span>
             </button>
           </div>
         </div>

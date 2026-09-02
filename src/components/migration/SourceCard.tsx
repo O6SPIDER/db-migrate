@@ -3,12 +3,15 @@ import {
   Eye,
   EyeOff,
   X,
-  CheckCircle2,
   AlertTriangle,
   Database,
   Server,
   Shield,
   Zap,
+  Circle,
+  Tag,
+  HardDrive,
+  Table2,
 } from 'lucide-react';
 import { SafeDatabaseIdentity } from '../../types/migration';
 import { redactUrl } from '../../lib/redaction';
@@ -33,22 +36,22 @@ export const SourceCard: React.FC<SourceCardProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-5 shadow-sm space-y-4">
+    <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-            <Database className="w-4 h-4" />
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-md bg-blue-600/15 border border-blue-500/25 flex items-center justify-center text-blue-400 shrink-0">
+            <Database className="w-4 h-4" strokeWidth={2} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-100">Source database</h3>
-            <p className="text-xs text-gray-400">The PostgreSQL database you want to copy.</p>
+            <h3 className="text-sm font-semibold text-gray-100 leading-tight">Source database</h3>
+            <p className="text-[11px] text-gray-500 leading-tight mt-0.5">The database you want to copy from.</p>
           </div>
         </div>
 
         {identity && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">
-            <CheckCircle2 className="w-3.5 h-3.5" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono bg-emerald-500/10 border border-emerald-700/40 text-emerald-400 shrink-0">
+            <Circle className="w-1.5 h-1.5 fill-current" strokeWidth={0} />
             Connected
           </span>
         )}
@@ -56,20 +59,22 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
       {/* Input controls */}
       <div className="space-y-2">
+        <label className="text-[11px] font-medium text-gray-500 block">Connection string</label>
+
         <div className="relative flex items-center">
           <input
             type={showPassword ? 'text' : 'password'}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="postgresql://user:password@ep-example.aws.neon.tech/neondb?sslmode=require"
-            className="w-full bg-[#090a0f] border border-[#1e2433] rounded-lg px-3.5 py-2.5 pr-24 text-xs font-mono text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+            className="w-full bg-black/30 border border-[#1a1d26] rounded-lg px-3.5 py-2.5 pr-9 text-xs font-mono text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-colors"
           />
 
-          <div className="absolute right-2 flex items-center space-x-1">
+          <div className="absolute right-2 flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="p-1.5 text-gray-400 hover:text-gray-200 rounded-md hover:bg-[#1f2533] transition-colors"
+              className="p-1.5 text-gray-500 hover:text-gray-200 rounded-md hover:bg-[#1a1d26] transition-colors"
               title={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -79,7 +84,7 @@ export const SourceCard: React.FC<SourceCardProps> = ({
               <button
                 type="button"
                 onClick={() => setUrl('')}
-                className="p-1.5 text-gray-400 hover:text-gray-200 rounded-md hover:bg-[#1f2533] transition-colors"
+                className="p-1.5 text-gray-500 hover:text-gray-200 rounded-md hover:bg-[#1a1d26] transition-colors"
                 title="Clear input"
               >
                 <X className="w-3.5 h-3.5" />
@@ -88,24 +93,24 @@ export const SourceCard: React.FC<SourceCardProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-between items-center pt-1">
-          <span className="text-[11px] font-mono text-gray-400 truncate max-w-xs">
-            {url ? redactUrl(url) : 'No URL entered'}
+        <div className="flex justify-between items-center pt-0.5 gap-3">
+          <span className="text-[11px] font-mono text-gray-600 truncate">
+            {url ? redactUrl(url) : 'No URL entered yet'}
           </span>
 
           <button
             type="button"
             onClick={onTestConnection}
             disabled={!url || isLoading}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm flex items-center space-x-1.5"
+            className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0 flex items-center gap-1.5"
           >
             {isLoading ? (
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Testing...
+                Testing
               </span>
             ) : (
-              <span>Test Connection</span>
+              <span>Test connection</span>
             )}
           </button>
         </div>
@@ -113,62 +118,72 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
       {/* Error message */}
       {error && (
-        <div className="p-3 rounded-lg bg-red-950/40 border border-red-800/40 text-red-300 text-xs flex items-start space-x-2">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-          <div className="font-mono">{error}</div>
+        <div className="p-3 rounded-lg bg-red-950/30 border border-red-900/40 flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" strokeWidth={2} />
+          <div className="text-[11px] font-mono text-red-300 leading-relaxed break-all">{error}</div>
         </div>
       )}
 
       {/* Validated details grid */}
       {identity && (
-        <div className="space-y-3 pt-2 border-t border-[#1e2433]">
+        <div className="space-y-3 pt-3 border-t border-[#1a1d26]">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="bg-[#090a0f] p-2.5 rounded-lg border border-[#1e2433]">
-              <span className="text-[10px] text-gray-400 block font-mono">PROVIDER</span>
-              <span className="text-xs font-semibold text-gray-200 mt-0.5 block">
-                {identity.provider}
-              </span>
+            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-600">
+                <Server className="w-3 h-3" strokeWidth={2} />
+                <span className="text-[10px]">Provider</span>
+              </div>
+              <span className="text-xs font-semibold text-gray-200 block">{identity.provider}</span>
             </div>
 
-            <div className="bg-[#090a0f] p-2.5 rounded-lg border border-[#1e2433]">
-              <span className="text-[10px] text-gray-400 block font-mono">POSTGRES VERSION</span>
-              <span className="text-xs font-semibold text-gray-200 mt-0.5 block font-mono">
+            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-600">
+                <Tag className="w-3 h-3" strokeWidth={2} />
+                <span className="text-[10px]">Postgres version</span>
+              </div>
+              <span className="text-xs font-semibold text-gray-200 block font-mono">
                 {identity.server_version}
               </span>
             </div>
 
-            <div className="bg-[#090a0f] p-2.5 rounded-lg border border-[#1e2433]">
-              <span className="text-[10px] text-gray-400 block font-mono">DATABASE SIZE</span>
-              <span className="text-xs font-semibold text-gray-200 mt-0.5 block">
+            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-600">
+                <HardDrive className="w-3 h-3" strokeWidth={2} />
+                <span className="text-[10px]">Database size</span>
+              </div>
+              <span className="text-xs font-semibold text-gray-200 block">
                 {identity.database_size_formatted}
               </span>
             </div>
 
-            <div className="bg-[#090a0f] p-2.5 rounded-lg border border-[#1e2433]">
-              <span className="text-[10px] text-gray-400 block font-mono">TABLES / SCHEMAS</span>
-              <span className="text-xs font-semibold text-gray-200 mt-0.5 block font-mono">
-                {identity.table_count} tables ({identity.schema_count} schemas)
+            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-600">
+                <Table2 className="w-3 h-3" strokeWidth={2} />
+                <span className="text-[10px]">Tables / schemas</span>
+              </div>
+              <span className="text-xs font-semibold text-gray-200 block font-mono">
+                {identity.table_count} / {identity.schema_count}
               </span>
             </div>
           </div>
 
           {/* Connection features */}
-          <div className="flex items-center justify-between text-xs text-gray-400 px-1 font-mono text-[11px]">
-            <span className="truncate">Host: {identity.hostname}</span>
-            <div className="flex items-center space-x-2 shrink-0">
+          <div className="flex items-center justify-between gap-3 px-0.5">
+            <span className="text-[11px] font-mono text-gray-500 truncate">{identity.hostname}</span>
+            <div className="flex items-center gap-2 shrink-0">
               {identity.ssl_enabled && (
-                <span className="inline-flex items-center gap-1 text-emerald-400">
-                  <Shield className="w-3 h-3" /> SSL Active
+                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
+                  <Shield className="w-3 h-3" strokeWidth={2} /> SSL
                 </span>
               )}
 
               {identity.is_pooled ? (
-                <span className="inline-flex items-center gap-1 text-amber-400">
-                  <Zap className="w-3 h-3" /> Pooled Endpoint
+                <span className="inline-flex items-center gap-1 text-[11px] text-amber-400">
+                  <Zap className="w-3 h-3" strokeWidth={2} /> Pooled
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-blue-400">
-                  <Server className="w-3 h-3" /> Direct Connection
+                <span className="inline-flex items-center gap-1 text-[11px] text-blue-400">
+                  <Server className="w-3 h-3" strokeWidth={2} /> Direct
                 </span>
               )}
             </div>
@@ -176,13 +191,11 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
           {/* Pooled Warning Banner */}
           {identity.pooled_warning && (
-            <div className="p-3 rounded-lg bg-amber-950/40 border border-amber-800/40 text-amber-300 text-xs flex items-start space-x-2.5">
-              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-amber-200">Recommended Direct Connection Warning</p>
-                <p className="mt-0.5 text-amber-300/80 leading-relaxed text-[11px]">
-                  {identity.pooled_warning}
-                </p>
+            <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-900/40 flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" strokeWidth={2} />
+              <div className="space-y-0.5">
+                <p className="text-xs font-semibold text-amber-200">Direct connection recommended</p>
+                <p className="text-[11px] text-amber-300/75 leading-relaxed">{identity.pooled_warning}</p>
               </div>
             </div>
           )}

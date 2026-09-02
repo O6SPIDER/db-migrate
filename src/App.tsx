@@ -8,6 +8,7 @@ import { PreflightCheck } from './components/migration/PreflightCheck';
 import { MigrationReview } from './components/migration/MigrationReview';
 import { MigrationProgress } from './components/migration/MigrationProgress';
 import { CompletionScreen } from './components/migration/CompletionScreen';
+import { MigrationStepper } from './components/migration/MigrationStepper';
 import { MigrationHistory } from './components/history/MigrationHistory';
 import { SettingsView } from './components/settings/SettingsView';
 import {
@@ -262,14 +263,19 @@ export const App: React.FC = () => {
       {/* NEW MIGRATION TAB */}
       {activeTab === 'migration' && (
         <div className="p-8 max-w-5xl mx-auto space-y-6">
-          {/* Top Title Banner */}
-          <div className="space-y-1">
-            <h1 className="text-xl font-bold tracking-tight text-gray-100">
-              PostgreSQL Database Migration
-            </h1>
-            <p className="text-xs text-gray-400">
-              Move an entire PostgreSQL database safely between accounts or hosts using native client tooling.
-            </p>
+          {/* Top Title Banner & Stepper */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#23272f] pb-6">
+            <div className="space-y-1">
+              <h1 className="text-xl font-bold tracking-tight text-gray-100">
+                PostgreSQL Database Migration
+              </h1>
+              <p className="text-xs text-gray-400">
+                Move an entire PostgreSQL database safely between accounts or hosts using native client tooling.
+              </p>
+            </div>
+            <div className="w-full sm:w-96">
+              <MigrationStepper stage={migrationStage} />
+            </div>
           </div>
 
           {/* DRAFT STATE: Main Setup Form */}
