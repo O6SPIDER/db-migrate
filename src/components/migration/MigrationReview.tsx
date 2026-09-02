@@ -1,13 +1,12 @@
 import React from 'react';
 import {
-  ArrowRight,
-  CheckCircle2,
   Database,
   Wrench,
+  CheckCircle2,
   AlertTriangle,
   Play,
   ArrowLeft,
-  Circle,
+  ArrowRight,
 } from 'lucide-react';
 import { SafeDatabaseIdentity, ToolchainSelection } from '../../types/migration';
 
@@ -21,20 +20,18 @@ interface MigrationReviewProps {
   isStarting: boolean;
 }
 
-const Tag: React.FC<{ dotClass: string; textClass: string; children: React.ReactNode }> = ({
-  dotClass,
+const Tag: React.FC<{ dotClass?: string; textClass: string; children: React.ReactNode }> = ({
   textClass,
   children,
 }) => (
-  <span className={`inline-flex items-center gap-1.5 text-[11px] font-mono ${textClass}`}>
-    <Circle className={`w-1.5 h-1.5 fill-current ${dotClass}`} strokeWidth={0} />
+  <span className={`inline-flex items-center text-[11px] font-mono ${textClass}`}>
     {children}
   </span>
 );
 
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div className="flex justify-between items-center text-xs gap-3">
-    <span className="text-gray-500">{label}</span>
+    <span className="text-gray-400">{label}</span>
     <span className="text-right min-w-0">{children}</span>
   </div>
 );
@@ -52,15 +49,15 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
   const canStart = !hasExistingTables || destAcknowledged;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="max-w-5xl space-y-4">
       {/* Header Banner */}
-      <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-6 flex items-center justify-between gap-4">
+      <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-6 flex items-center justify-between gap-4">
         <div className="space-y-1.5">
           <Tag dotClass="text-blue-400" textClass="text-blue-400">
             Dry run summary
           </Tag>
-          <h2 className="text-base font-semibold text-gray-100">Review migration plan</h2>
-          <p className="text-xs text-gray-500">
+          <h2 className="text-base font-semibold text-white">Review migration plan</h2>
+          <p className="text-xs text-gray-400">
             Confirm source, destination, and toolchain before the migration begins.
           </p>
         </div>
@@ -68,22 +65,22 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-3.5 py-2 rounded-lg text-xs font-medium bg-[#161922] border border-[#262b36] hover:bg-[#1c202b] text-gray-300 hover:text-white transition-colors flex items-center gap-2 shrink-0"
+          className="px-3.5 py-2 rounded-lg text-xs font-medium bg-[#121212] border border-[#242424] hover:bg-[#1a1a1a] text-gray-300 hover:text-white transition-colors flex items-center gap-2 shrink-0"
         >
           <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2} />
           <span>Edit configuration</span>
         </button>
       </div>
 
-      {/* Main FROM -> TO Comparison */}
+      {/* FROM -> TO Side by Side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
         {/* FROM */}
-        <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#1a1d26] pb-3">
+        <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1f1f1f] pb-3">
             <Tag dotClass="text-blue-400" textClass="text-blue-400 font-semibold">
               Source
             </Tag>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-black/25 text-gray-400 border border-[#1a1d26]">
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-[#121212] text-gray-400 border border-[#242424]">
               {sourceId.provider}
             </span>
           </div>
@@ -101,7 +98,7 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
               <span className="font-mono text-gray-200">{sourceId.server_version}</span>
             </Row>
             <Row label="Size">
-              <span className="font-semibold text-gray-100">{sourceId.database_size_formatted}</span>
+              <span className="font-semibold text-white">{sourceId.database_size_formatted}</span>
             </Row>
             <Row label="Tables / schemas">
               <span className="font-mono text-gray-200">
@@ -111,18 +108,18 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
           </div>
         </div>
 
-        {/* Central arrow for desktop */}
-        <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#161922] border border-[#262b36] items-center justify-center text-blue-400 z-10">
-          <ArrowRight className="w-4 h-4" strokeWidth={2} />
+        {/* Center Divider Icon without background wrapper */}
+        <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-400 z-10">
+          <ArrowRight className="w-5 h-5" strokeWidth={2} />
         </div>
 
         {/* TO */}
-        <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#1a1d26] pb-3">
+        <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1f1f1f] pb-3">
             <Tag dotClass="text-emerald-400" textClass="text-emerald-400 font-semibold">
               Destination
             </Tag>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-black/25 text-gray-400 border border-[#1a1d26]">
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-[#121212] text-gray-400 border border-[#242424]">
               {destId.provider}
             </span>
           </div>
@@ -153,24 +150,24 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
       {/* Toolchain & Scope Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Toolchain */}
-        <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-3">
+        <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-gray-300">
-            <Wrench className="w-3.5 h-3.5 text-purple-400" strokeWidth={2} />
+            <Wrench className="w-4 h-4 text-purple-400" strokeWidth={2} />
             <span>Selected client toolchain</span>
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between items-center bg-black/25 p-2.5 rounded-lg border border-[#1a1d26]">
-              <span className="text-xs text-gray-500 font-mono">pg_dump</span>
+            <div className="flex justify-between items-center bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f]">
+              <span className="text-xs text-gray-400 font-mono">pg_dump</span>
               <span className="text-xs text-emerald-400 font-mono flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" strokeWidth={2} />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
                 v{toolchain.selected_dump?.version}
               </span>
             </div>
-            <div className="flex justify-between items-center bg-black/25 p-2.5 rounded-lg border border-[#1a1d26]">
-              <span className="text-xs text-gray-500 font-mono">pg_restore</span>
+            <div className="flex justify-between items-center bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f]">
+              <span className="text-xs text-gray-400 font-mono">pg_restore</span>
               <span className="text-xs text-emerald-400 font-mono flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" strokeWidth={2} />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
                 v{toolchain.selected_restore?.version}
               </span>
             </div>
@@ -178,9 +175,9 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
         </div>
 
         {/* Migration Scope */}
-        <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-3">
+        <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-gray-300">
-            <Database className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} />
+            <Database className="w-4 h-4 text-blue-400" strokeWidth={2} />
             <span>Migration scope</span>
           </div>
 
@@ -188,7 +185,7 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
             {['Schemas', 'Tables & data', 'Indexes', 'Foreign keys'].map((item) => (
               <span
                 key={item}
-                className="flex items-center gap-1.5 bg-black/25 p-2 rounded-lg border border-[#1a1d26] text-xs text-gray-300"
+                className="flex items-center gap-1.5 bg-[#121212] p-2 rounded-lg border border-[#1f1f1f] text-xs text-gray-300"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" strokeWidth={2} />
                 {item}
@@ -200,7 +197,7 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
 
       {/* Non-empty acknowledgment requirement banner if needed */}
       {hasExistingTables && !destAcknowledged && (
-        <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-900/40 flex items-start gap-3">
+        <div className="p-4 rounded-xl bg-[#1a140a] border border-amber-900/50 flex items-start gap-3">
           <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" strokeWidth={2} />
           <div className="space-y-0.5">
             <p className="text-xs font-semibold text-amber-100">Acknowledgment required</p>
@@ -212,10 +209,10 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
       )}
 
       {/* Start Migration Primary Control */}
-      <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 flex items-center justify-between gap-4">
+      <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 flex items-center justify-between gap-4">
         <div className="space-y-0.5">
           <p className="text-xs font-semibold text-gray-200">Point of no return</p>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-gray-400">
             Starting will dump the source database and restore its objects into the destination.
           </p>
         </div>
@@ -224,7 +221,7 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
           type="button"
           onClick={onStartMigration}
           disabled={!canStart || isStarting}
-          className="px-6 py-3 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] flex items-center gap-2 shrink-0"
+          className="px-6 py-3 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 shrink-0"
         >
           {isStarting ? (
             <span className="flex items-center gap-2">

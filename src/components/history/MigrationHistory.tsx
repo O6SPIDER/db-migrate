@@ -37,27 +37,25 @@ export const MigrationHistory: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 max-w-6xl space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-            <History className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3">
+          <History className="w-5 h-5 text-purple-400 shrink-0" strokeWidth={2} />
           <div>
-            <h1 className="text-lg font-semibold text-gray-100">Migration History</h1>
+            <h1 className="text-lg font-bold text-white">Migration History</h1>
             <p className="text-xs text-gray-400">
               Audit log of past database migrations performed on this machine.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={fetchHistory}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#161a26] border border-[#272e42] hover:bg-[#202638] text-gray-300 transition-all flex items-center space-x-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#121212] border border-[#242424] hover:bg-[#1a1a1a] text-gray-300 hover:text-white transition-colors flex items-center gap-1.5"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} strokeWidth={2} />
             <span>Refresh</span>
           </button>
 
@@ -65,9 +63,9 @@ export const MigrationHistory: React.FC = () => {
             <button
               type="button"
               onClick={handleClear}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-950/40 border border-red-800/40 hover:bg-red-900/50 text-red-300 transition-all flex items-center space-x-1.5"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#1a0a0a] border border-red-900/60 hover:bg-red-900/40 text-red-300 transition-colors flex items-center gap-1.5"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-3.5 h-3.5" strokeWidth={2} />
               <span>Clear History</span>
             </button>
           )}
@@ -77,17 +75,17 @@ export const MigrationHistory: React.FC = () => {
       {isLoading ? (
         <div className="p-12 text-center text-xs text-gray-500 font-mono">Loading history...</div>
       ) : history.length === 0 ? (
-        <div className="bg-[#11131a] border border-[#1e2433] rounded-xl p-12 text-center space-y-3">
-          <History className="w-8 h-8 text-gray-600 mx-auto" />
+        <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-12 text-center space-y-3">
+          <History className="w-8 h-8 text-gray-600 mx-auto" strokeWidth={1.5} />
           <h3 className="text-sm font-semibold text-gray-300">No Past Migrations Recorded</h3>
           <p className="text-xs text-gray-500 max-w-sm mx-auto">
             Once you execute a database migration using DB Migrate, sanitized metadata will be preserved locally here.
           </p>
         </div>
       ) : (
-        <div className="bg-[#11131a] border border-[#1e2433] rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl overflow-hidden shadow-sm">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-[#0d0f17] text-gray-400 border-b border-[#1e2433]">
+            <thead className="bg-[#121212] text-gray-400 border-b border-[#1f1f1f]">
               <tr>
                 <th className="p-3 font-medium">Timestamp</th>
                 <th className="p-3 font-medium">Source</th>
@@ -97,9 +95,9 @@ export const MigrationHistory: React.FC = () => {
                 <th className="p-3 font-medium text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1e2433] text-gray-300">
+            <tbody className="divide-y divide-[#1f1f1f] text-gray-300">
               {history.map((rec) => (
-                <tr key={rec.migration_id} className="hover:bg-[#131724]">
+                <tr key={rec.migration_id} className="hover:bg-white/[0.03]">
                   <td className="p-3 text-gray-400">
                     {new Date(rec.timestamp).toLocaleDateString()}{' '}
                     {new Date(rec.timestamp).toLocaleTimeString()}
@@ -120,12 +118,12 @@ export const MigrationHistory: React.FC = () => {
                   <td className="p-3">{formatDuration(rec.duration_seconds)}</td>
                   <td className="p-3 text-right">
                     {rec.status.includes('VERIFIED') ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
-                        <CheckCircle2 className="w-3 h-3" /> Verified
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-[#0d1a12] text-emerald-400 border border-emerald-900/60">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" strokeWidth={2} /> Verified
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-amber-950/60 text-amber-400 border border-amber-800/40">
-                        <AlertTriangle className="w-3 h-3" /> {rec.status}
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-[#1a140a] text-amber-400 border border-amber-900/60">
+                        <AlertTriangle className="w-3 h-3 text-amber-400" strokeWidth={2} /> {rec.status}
                       </span>
                     )}
                   </td>

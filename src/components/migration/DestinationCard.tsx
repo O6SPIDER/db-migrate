@@ -8,7 +8,6 @@ import {
   Server,
   Shield,
   Zap,
-  Circle,
   Tag,
   HardDrive,
   Table2,
@@ -19,12 +18,12 @@ import { redactUrl } from '../../lib/redaction';
 interface DestinationCardProps {
   url: string;
   setUrl: (url: string) => void;
-  identity?: SafeDatabaseIdentity;
+  identity?: SafeDatabaseIdentity | null;
   isLoading: boolean;
   onTestConnection: () => void;
-  error?: string;
+  error?: string | null;
   destAcknowledged: boolean;
-  setDestAcknowledged: (ack: boolean) => void;
+  setDestAcknowledged: (val: boolean) => void;
 }
 
 export const DestinationCard: React.FC<DestinationCardProps> = ({
@@ -38,26 +37,22 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
   setDestAcknowledged,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-
   const hasExistingTables = (identity?.table_count ?? 0) > 0;
 
   return (
-    <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-4">
+    <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-md bg-emerald-600/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
-            <Database className="w-4 h-4" strokeWidth={2} />
-          </div>
+          <Database className="w-5 h-5 text-emerald-400 shrink-0" strokeWidth={2} />
           <div>
-            <h3 className="text-sm font-semibold text-gray-100 leading-tight">Destination database</h3>
-            <p className="text-[11px] text-gray-500 leading-tight mt-0.5">Where the copied database will be restored.</p>
+            <h3 className="text-sm font-semibold text-white leading-tight">Destination database</h3>
+            <p className="text-[11px] text-gray-400 leading-tight mt-0.5">Where the copied database will be restored.</p>
           </div>
         </div>
 
         {identity && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono bg-emerald-500/10 border border-emerald-700/40 text-emerald-400 shrink-0">
-            <Circle className="w-1.5 h-1.5 fill-current" strokeWidth={0} />
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-mono bg-[#0d1a12] border border-emerald-900/60 text-emerald-400 shrink-0">
             Connected
           </span>
         )}
@@ -65,7 +60,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
 
       {/* Input controls */}
       <div className="space-y-2">
-        <label className="text-[11px] font-medium text-gray-500 block">Connection string</label>
+        <label className="text-[11px] font-medium text-gray-400 block">Connection string</label>
 
         <div className="relative flex items-center">
           <input
@@ -73,14 +68,14 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="postgresql://user:password@ep-new-project.aws.neon.tech/neondb?sslmode=require"
-            className="w-full bg-black/30 border border-[#1a1d26] rounded-lg px-3.5 py-2.5 pr-9 text-xs font-mono text-gray-200 placeholder-gray-600 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/30 transition-colors"
+            className="w-full bg-[#121212] border border-[#242424] rounded-lg px-3.5 py-2.5 pr-9 text-xs font-mono text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/40 transition-colors"
           />
 
           <div className="absolute right-2 flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="p-1.5 text-gray-500 hover:text-gray-200 rounded-md hover:bg-[#1a1d26] transition-colors"
+              className="p-1.5 text-gray-400 hover:text-white rounded-md hover:bg-[#1a1a1a] transition-colors"
               title={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -90,7 +85,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
               <button
                 type="button"
                 onClick={() => setUrl('')}
-                className="p-1.5 text-gray-500 hover:text-gray-200 rounded-md hover:bg-[#1a1d26] transition-colors"
+                className="p-1.5 text-gray-400 hover:text-white rounded-md hover:bg-[#1a1a1a] transition-colors"
                 title="Clear input"
               >
                 <X className="w-3.5 h-3.5" />
@@ -100,7 +95,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
         </div>
 
         <div className="flex justify-between items-center pt-0.5 gap-3">
-          <span className="text-[11px] font-mono text-gray-600 truncate">
+          <span className="text-[11px] font-mono text-gray-400 truncate">
             {url ? redactUrl(url) : 'No URL entered yet'}
           </span>
 
@@ -124,40 +119,40 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
 
       {/* Error message */}
       {error && (
-        <div className="p-3 rounded-lg bg-red-950/30 border border-red-900/40 flex items-start gap-2.5">
+        <div className="p-3 rounded-lg bg-[#1a0a0a] border border-red-900/50 flex items-start gap-2.5">
           <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" strokeWidth={2} />
           <div className="text-[11px] font-mono text-red-300 leading-relaxed break-all">{error}</div>
         </div>
       )}
 
-      {/* Validated details grid */}
+      {/* Connected Database Summary */}
       {identity && (
-        <div className="space-y-3 pt-3 border-t border-[#1a1d26]">
+        <div className="space-y-3 pt-3 border-t border-[#1f1f1f]">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <Server className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <Server className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} />
                 <span className="text-[10px]">Provider</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block">{identity.provider}</span>
+              <span className="text-xs font-semibold text-white block">{identity.provider}</span>
             </div>
 
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <Tag className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <Tag className="w-3.5 h-3.5 text-purple-400" strokeWidth={2} />
                 <span className="text-[10px]">Postgres version</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block font-mono">
+              <span className="text-xs font-semibold text-white block font-mono">
                 {identity.server_version}
               </span>
             </div>
 
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <HardDrive className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <HardDrive className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
                 <span className="text-[10px]">Database size</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block">
+              <span className="text-xs font-semibold text-white block">
                 {identity.database_size_formatted}
               </span>
             </div>
@@ -166,18 +161,18 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
               className={[
                 'p-2.5 rounded-lg border space-y-1',
                 hasExistingTables
-                  ? 'bg-red-950/25 border-red-900/40'
-                  : 'bg-black/25 border-[#1a1d26]',
+                  ? 'bg-[#1a0a0a] border-red-900/50'
+                  : 'bg-[#121212] border-[#1f1f1f]',
               ].join(' ')}
             >
-              <div className={['flex items-center gap-1.5', hasExistingTables ? 'text-red-400/80' : 'text-gray-600'].join(' ')}>
-                <Table2 className="w-3 h-3" strokeWidth={2} />
+              <div className={['flex items-center gap-1.5', hasExistingTables ? 'text-red-400' : 'text-gray-400'].join(' ')}>
+                <Table2 className="w-3.5 h-3.5" strokeWidth={2} />
                 <span className="text-[10px]">Status</span>
               </div>
               <span
                 className={[
                   'text-xs font-semibold block font-mono',
-                  hasExistingTables ? 'text-red-300' : 'text-gray-200',
+                  hasExistingTables ? 'text-red-300' : 'text-white',
                 ].join(' ')}
               >
                 {hasExistingTables ? `${identity.table_count} tables exist` : 'Empty database'}
@@ -186,34 +181,34 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
           </div>
 
           <div className="flex items-center justify-between gap-3 px-0.5">
-            <span className="text-[11px] font-mono text-gray-500 truncate">{identity.hostname}</span>
+            <span className="text-[11px] font-mono text-gray-400 truncate">{identity.hostname}</span>
             <div className="flex items-center gap-2 shrink-0">
               {identity.ssl_enabled && (
-                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
-                  <Shield className="w-3 h-3" strokeWidth={2} /> SSL
+                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+                  <Shield className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} /> SSL
                 </span>
               )}
 
               {identity.is_pooled ? (
-                <span className="inline-flex items-center gap-1 text-[11px] text-amber-400">
-                  <Zap className="w-3 h-3" strokeWidth={2} /> Pooled
+                <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium">
+                  <Zap className="w-3.5 h-3.5 text-amber-400" strokeWidth={2} /> Pooled
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] text-blue-400">
-                  <Server className="w-3 h-3" strokeWidth={2} /> Direct
+                <span className="inline-flex items-center gap-1 text-[11px] text-blue-400 font-medium">
+                  <Server className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} /> Direct
                 </span>
               )}
             </div>
           </div>
 
-          {/* High visibility warning for non-empty destination — the single riskiest moment in this form */}
+          {/* High visibility warning for non-empty destination */}
           {hasExistingTables && (
-            <div className="p-4 rounded-xl bg-red-950/40 border border-red-800/50 space-y-3">
+            <div className="p-4 rounded-xl bg-[#1a0a0a] border border-red-900/50 space-y-3">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" strokeWidth={2} />
                 <div className="space-y-1">
                   <h4 className="text-xs font-semibold text-red-100">Destination is not empty</h4>
-                  <p className="text-[11px] text-red-300/85 leading-relaxed">
+                  <p className="text-[11px] text-red-300/90 leading-relaxed">
                     This database already has{' '}
                     <span className="text-white font-medium">{identity.table_count} tables</span>.
                     Restoring here can create name conflicts or overwrite existing objects.
@@ -223,14 +218,14 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
 
               <label
                 htmlFor="dest-ack-check"
-                className="flex items-start gap-2.5 pt-2.5 border-t border-red-900/50 cursor-pointer select-none"
+                className="flex items-start gap-2.5 pt-2.5 border-t border-red-950/80 cursor-pointer select-none"
               >
                 <input
                   type="checkbox"
                   id="dest-ack-check"
                   checked={destAcknowledged}
                   onChange={(e) => setDestAcknowledged(e.target.checked)}
-                  className="w-4 h-4 mt-0.5 rounded border-red-700 bg-red-950 text-red-500 focus:ring-1 focus:ring-red-500/50 focus:ring-offset-0 cursor-pointer shrink-0"
+                  className="w-4 h-4 mt-0.5 rounded border-red-800 bg-[#121212] text-red-500 focus:ring-1 focus:ring-red-500/50 focus:ring-offset-0 cursor-pointer shrink-0"
                 />
                 <span className="text-[11px] font-medium text-red-200 leading-relaxed">
                   I understand this destination is not empty, and restoring may modify or conflict

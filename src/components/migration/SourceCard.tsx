@@ -8,7 +8,6 @@ import {
   Server,
   Shield,
   Zap,
-  Circle,
   Tag,
   HardDrive,
   Table2,
@@ -19,10 +18,10 @@ import { redactUrl } from '../../lib/redaction';
 interface SourceCardProps {
   url: string;
   setUrl: (url: string) => void;
-  identity?: SafeDatabaseIdentity;
+  identity?: SafeDatabaseIdentity | null;
   isLoading: boolean;
   onTestConnection: () => void;
-  error?: string;
+  error?: string | null;
 }
 
 export const SourceCard: React.FC<SourceCardProps> = ({
@@ -36,22 +35,19 @@ export const SourceCard: React.FC<SourceCardProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-4">
+    <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-md bg-blue-600/15 border border-blue-500/25 flex items-center justify-center text-blue-400 shrink-0">
-            <Database className="w-4 h-4" strokeWidth={2} />
-          </div>
+          <Database className="w-5 h-5 text-blue-400 shrink-0" strokeWidth={2} />
           <div>
-            <h3 className="text-sm font-semibold text-gray-100 leading-tight">Source database</h3>
-            <p className="text-[11px] text-gray-500 leading-tight mt-0.5">The database you want to copy from.</p>
+            <h3 className="text-sm font-semibold text-white leading-tight">Source database</h3>
+            <p className="text-[11px] text-gray-400 leading-tight mt-0.5">The database you want to copy from.</p>
           </div>
         </div>
 
         {identity && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono bg-emerald-500/10 border border-emerald-700/40 text-emerald-400 shrink-0">
-            <Circle className="w-1.5 h-1.5 fill-current" strokeWidth={0} />
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-mono bg-[#0d1a12] border border-emerald-900/60 text-emerald-400 shrink-0">
             Connected
           </span>
         )}
@@ -59,7 +55,7 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
       {/* Input controls */}
       <div className="space-y-2">
-        <label className="text-[11px] font-medium text-gray-500 block">Connection string</label>
+        <label className="text-[11px] font-medium text-gray-400 block">Connection string</label>
 
         <div className="relative flex items-center">
           <input
@@ -67,14 +63,14 @@ export const SourceCard: React.FC<SourceCardProps> = ({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="postgresql://user:password@ep-example.aws.neon.tech/neondb?sslmode=require"
-            className="w-full bg-black/30 border border-[#1a1d26] rounded-lg px-3.5 py-2.5 pr-9 text-xs font-mono text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-colors"
+            className="w-full bg-[#121212] border border-[#242424] rounded-lg px-3.5 py-2.5 pr-9 text-xs font-mono text-gray-100 placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-colors"
           />
 
           <div className="absolute right-2 flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="p-1.5 text-gray-500 hover:text-gray-200 rounded-md hover:bg-[#1a1d26] transition-colors"
+              className="p-1.5 text-gray-400 hover:text-white rounded-md hover:bg-[#1a1a1a] transition-colors"
               title={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -84,7 +80,7 @@ export const SourceCard: React.FC<SourceCardProps> = ({
               <button
                 type="button"
                 onClick={() => setUrl('')}
-                className="p-1.5 text-gray-500 hover:text-gray-200 rounded-md hover:bg-[#1a1d26] transition-colors"
+                className="p-1.5 text-gray-400 hover:text-white rounded-md hover:bg-[#1a1a1a] transition-colors"
                 title="Clear input"
               >
                 <X className="w-3.5 h-3.5" />
@@ -94,7 +90,7 @@ export const SourceCard: React.FC<SourceCardProps> = ({
         </div>
 
         <div className="flex justify-between items-center pt-0.5 gap-3">
-          <span className="text-[11px] font-mono text-gray-600 truncate">
+          <span className="text-[11px] font-mono text-gray-400 truncate">
             {url ? redactUrl(url) : 'No URL entered yet'}
           </span>
 
@@ -118,50 +114,50 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
       {/* Error message */}
       {error && (
-        <div className="p-3 rounded-lg bg-red-950/30 border border-red-900/40 flex items-start gap-2.5">
+        <div className="p-3 rounded-lg bg-[#1a0a0a] border border-red-900/50 flex items-start gap-2.5">
           <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" strokeWidth={2} />
           <div className="text-[11px] font-mono text-red-300 leading-relaxed break-all">{error}</div>
         </div>
       )}
 
-      {/* Validated details grid */}
+      {/* Connected Database Summary */}
       {identity && (
-        <div className="space-y-3 pt-3 border-t border-[#1a1d26]">
+        <div className="space-y-3 pt-3 border-t border-[#1f1f1f]">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <Server className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <Server className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} />
                 <span className="text-[10px]">Provider</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block">{identity.provider}</span>
+              <span className="text-xs font-semibold text-white block">{identity.provider}</span>
             </div>
 
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <Tag className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <Tag className="w-3.5 h-3.5 text-purple-400" strokeWidth={2} />
                 <span className="text-[10px]">Postgres version</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block font-mono">
+              <span className="text-xs font-semibold text-white block font-mono">
                 {identity.server_version}
               </span>
             </div>
 
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <HardDrive className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <HardDrive className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
                 <span className="text-[10px]">Database size</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block">
+              <span className="text-xs font-semibold text-white block">
                 {identity.database_size_formatted}
               </span>
             </div>
 
-            <div className="bg-black/25 p-2.5 rounded-lg border border-[#1a1d26] space-y-1">
-              <div className="flex items-center gap-1.5 text-gray-600">
-                <Table2 className="w-3 h-3" strokeWidth={2} />
+            <div className="bg-[#121212] p-2.5 rounded-lg border border-[#1f1f1f] space-y-1">
+              <div className="flex items-center gap-1.5 text-gray-400">
+                <Table2 className="w-3.5 h-3.5 text-amber-400" strokeWidth={2} />
                 <span className="text-[10px]">Tables / schemas</span>
               </div>
-              <span className="text-xs font-semibold text-gray-200 block font-mono">
+              <span className="text-xs font-semibold text-white block font-mono">
                 {identity.table_count} / {identity.schema_count}
               </span>
             </div>
@@ -169,21 +165,21 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
           {/* Connection features */}
           <div className="flex items-center justify-between gap-3 px-0.5">
-            <span className="text-[11px] font-mono text-gray-500 truncate">{identity.hostname}</span>
+            <span className="text-[11px] font-mono text-gray-400 truncate">{identity.hostname}</span>
             <div className="flex items-center gap-2 shrink-0">
               {identity.ssl_enabled && (
-                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
-                  <Shield className="w-3 h-3" strokeWidth={2} /> SSL
+                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+                  <Shield className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} /> SSL
                 </span>
               )}
 
               {identity.is_pooled ? (
-                <span className="inline-flex items-center gap-1 text-[11px] text-amber-400">
-                  <Zap className="w-3 h-3" strokeWidth={2} /> Pooled
+                <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium">
+                  <Zap className="w-3.5 h-3.5 text-amber-400" strokeWidth={2} /> Pooled
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] text-blue-400">
-                  <Server className="w-3 h-3" strokeWidth={2} /> Direct
+                <span className="inline-flex items-center gap-1 text-[11px] text-blue-400 font-medium">
+                  <Server className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} /> Direct
                 </span>
               )}
             </div>
@@ -191,11 +187,11 @@ export const SourceCard: React.FC<SourceCardProps> = ({
 
           {/* Pooled Warning Banner */}
           {identity.pooled_warning && (
-            <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-900/40 flex items-start gap-2.5">
+            <div className="p-3 rounded-lg bg-[#1a140a] border border-amber-900/50 flex items-start gap-2.5">
               <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" strokeWidth={2} />
               <div className="space-y-0.5">
                 <p className="text-xs font-semibold text-amber-200">Direct connection recommended</p>
-                <p className="text-[11px] text-amber-300/75 leading-relaxed">{identity.pooled_warning}</p>
+                <p className="text-[11px] text-amber-300/80 leading-relaxed">{identity.pooled_warning}</p>
               </div>
             </div>
           )}

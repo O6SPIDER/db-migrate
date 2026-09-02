@@ -262,11 +262,11 @@ export const App: React.FC = () => {
 
       {/* NEW MIGRATION TAB */}
       {activeTab === 'migration' && (
-        <div className="p-8 max-w-5xl mx-auto space-y-6">
+        <div className="p-6 max-w-6xl space-y-6">
           {/* Top Title Banner & Stepper */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#23272f] pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1f1f1f] pb-6">
             <div className="space-y-1">
-              <h1 className="text-xl font-bold tracking-tight text-gray-100">
+              <h1 className="text-xl font-bold tracking-tight text-white">
                 PostgreSQL Database Migration
               </h1>
               <p className="text-xs text-gray-400">

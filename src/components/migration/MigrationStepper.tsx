@@ -61,19 +61,19 @@ export const MigrationStepper: React.FC<MigrationStepperProps> = ({ stage }) => 
               <div
                 className={[
                   'w-8 h-8 rounded-full flex items-center justify-center border transition-colors duration-300',
-                  status === 'done' && 'bg-blue-500/15 border-blue-500/50 text-blue-400',
-                  status === 'active' && 'bg-blue-600 border-blue-500 text-white shadow-[0_0_0_4px_rgba(59,130,246,0.15)]',
-                  status === 'pending' && 'bg-[#161922] border-[#262b36] text-gray-600',
+                  status === 'done' && 'border-blue-500 text-blue-400 bg-transparent',
+                  status === 'active' && 'border-blue-500 text-white bg-blue-600 shadow-[0_0_0_3px_rgba(59,130,246,0.25)]',
+                  status === 'pending' && 'border-[#262626] text-gray-500 bg-transparent',
                   status === 'error' &&
                     (cancelled
-                      ? 'bg-amber-500/10 border-amber-600/50 text-amber-400'
-                      : 'bg-red-500/10 border-red-600/50 text-red-400'),
+                      ? 'border-amber-500 text-amber-400 bg-transparent'
+                      : 'border-red-500 text-red-400 bg-transparent'),
                 ]
                   .filter(Boolean)
                   .join(' ')}
               >
                 {status === 'done' ? (
-                  <Check className="w-4 h-4" strokeWidth={2.5} />
+                  <Check className="w-4 h-4 text-blue-400" strokeWidth={2.5} />
                 ) : status === 'error' ? (
                   <X className="w-4 h-4" strokeWidth={2.5} />
                 ) : (
@@ -83,7 +83,7 @@ export const MigrationStepper: React.FC<MigrationStepperProps> = ({ stage }) => 
               <span
                 className={[
                   'text-[11px] font-medium tracking-tight',
-                  status === 'active' ? 'text-gray-100' : status === 'error' ? (cancelled ? 'text-amber-400' : 'text-red-400') : 'text-gray-500',
+                  status === 'active' ? 'text-white' : status === 'error' ? (cancelled ? 'text-amber-400' : 'text-red-400') : 'text-gray-400',
                 ].join(' ')}
               >
                 {step.label}
@@ -95,8 +95,8 @@ export const MigrationStepper: React.FC<MigrationStepperProps> = ({ stage }) => 
                 className={[
                   'h-px flex-1 mx-2 mb-5 transition-colors duration-300',
                   flatIndex(stage) > i && stage !== 'FAILED' && stage !== 'CANCELLED'
-                    ? 'bg-blue-500/50'
-                    : 'bg-[#23272f]',
+                    ? 'bg-blue-500'
+                    : 'bg-[#262626]',
                 ].join(' ')}
               />
             )}

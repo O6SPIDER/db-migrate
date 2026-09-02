@@ -1,10 +1,10 @@
 import React from 'react';
-import { CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, XCircle } from 'lucide-react';
 import { SafeDatabaseIdentity, ToolchainSelection } from '../../types/migration';
 
 interface PreflightCheckProps {
-  sourceId?: SafeDatabaseIdentity;
-  destId?: SafeDatabaseIdentity;
+  sourceId?: SafeDatabaseIdentity | null;
+  destId?: SafeDatabaseIdentity | null;
   toolchain?: ToolchainSelection;
   isSameDatabase: boolean;
   destAcknowledged: boolean;
@@ -43,7 +43,7 @@ export const PreflightCheck: React.FC<PreflightCheckProps> = ({
       passed: toolchain?.compatible ?? false,
       detail: toolchain?.compatible
         ? `pg_dump v${toolchain.selected_dump?.version} & pg_restore v${toolchain.selected_restore?.version}`
-        : toolchain?.incompatibility_reason || 'Missing tools',
+        : toolchain?.incompatibility_reason || 'Client tools not detected',
     },
     {
       title: 'Source readable & inspected',
@@ -64,26 +64,24 @@ export const PreflightCheck: React.FC<PreflightCheckProps> = ({
   ];
 
   return (
-    <div className="bg-[#0e1016] border border-[#1a1d26] rounded-xl p-5 space-y-4">
+    <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-5 space-y-4">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-md bg-emerald-600/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
-          <ShieldCheck className="w-4 h-4" strokeWidth={2} />
-        </div>
+        <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" strokeWidth={2} />
         <div>
-          <h3 className="text-sm font-semibold text-gray-100 leading-tight">Preflight checklist</h3>
-          <p className="text-[11px] text-gray-500 leading-tight mt-0.5">
+          <h3 className="text-sm font-semibold text-white leading-tight">Preflight checklist</h3>
+          <p className="text-[11px] text-gray-400 leading-tight mt-0.5">
             Safety checks run before any migration process starts.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {checks.map((c, i) => (
           <div
             key={i}
             className={[
               'p-3 rounded-lg border flex items-center justify-between gap-3 transition-colors',
-              c.passed ? 'bg-black/25 border-[#1a1d26]' : 'bg-red-950/20 border-red-900/40',
+              c.passed ? 'bg-[#121212] border-[#1f1f1f]' : 'bg-[#1a0a0a] border-red-900/50',
             ].join(' ')}
           >
             <div className="space-y-0.5 min-w-0">
@@ -93,7 +91,7 @@ export const PreflightCheck: React.FC<PreflightCheckProps> = ({
               <span
                 className={[
                   'text-[11px] font-mono block truncate',
-                  c.passed ? 'text-gray-500' : 'text-red-300/80',
+                  c.passed ? 'text-gray-400' : 'text-red-300/80',
                 ].join(' ')}
                 title={c.detail}
               >
