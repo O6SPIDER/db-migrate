@@ -262,7 +262,7 @@ export const App: React.FC = () => {
 
       {/* NEW MIGRATION TAB */}
       {activeTab === 'migration' && (
-        <div className="p-6 max-w-6xl space-y-6">
+        <div className="p-6 w-full space-y-6 transition-all duration-300 ease-in-out">
           {/* Top Title Banner & Stepper */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1f1f1f] pb-6">
             <div className="space-y-1">

@@ -70,7 +70,7 @@ export const MigrationProgress: React.FC<MigrationProgressProps> = ({
   };
 
   return (
-    <div className="max-w-5xl space-y-4">
+    <div className="w-full space-y-4">
       {/* Header & Stage Rail */}
       <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-6 space-y-6">
         <div className="flex items-center justify-between gap-4">

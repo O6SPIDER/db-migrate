@@ -49,7 +49,7 @@ export const MigrationReview: React.FC<MigrationReviewProps> = ({
   const canStart = !hasExistingTables || destAcknowledged;
 
   return (
-    <div className="max-w-5xl space-y-4">
+    <div className="w-full space-y-4">
       {/* Header Banner */}
       <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-6 flex items-center justify-between gap-4">
         <div className="space-y-1.5">

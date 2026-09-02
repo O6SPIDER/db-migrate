@@ -23,7 +23,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   };
 
   return (
-    <div className="p-6 max-w-5xl space-y-6">
+    <div className="p-6 w-full space-y-6">
       <div className="flex items-center gap-3">
         <Settings className="w-5 h-5 text-emerald-400 shrink-0" strokeWidth={2} />
         <div>

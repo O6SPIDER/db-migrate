@@ -37,7 +37,7 @@ export const MigrationHistory: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl space-y-6">
+    <div className="p-6 w-full space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <History className="w-5 h-5 text-purple-400 shrink-0" strokeWidth={2} />

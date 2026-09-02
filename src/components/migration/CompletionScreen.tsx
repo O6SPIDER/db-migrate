@@ -101,7 +101,7 @@ export const CompletionScreen: React.FC<CompletionScreenProps> = ({
   const isWarning = report.status === 'VERIFIED_WITH_WARNINGS';
 
   return (
-    <div className="max-w-5xl space-y-4">
+    <div className="w-full space-y-4">
       {/* Header Result Card */}
       <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-6 space-y-5">
         <div className="flex items-center justify-between gap-4">
