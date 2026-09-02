@@ -1,7 +1,9 @@
 use crate::security::credential::ParsedPostgresUrl;
+use native_tls::TlsConnector;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tokio_postgres::NoTls;
+use postgres_native_tls::MakeTlsConnector;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SafeDatabaseIdentity {
@@ -38,18 +40,61 @@ impl ConnectionTester {
         }
         config.connect_timeout(Duration::from_secs(8));
 
-        // Connect (NoTls for basic test, TLS handling if configured)
-        let (client, connection) = config
-            .connect(NoTls)
-            .await
-            .map_err(|e| format!("Database connection failed: {}", crate::security::redaction::redact_text(&e.to_string())))?;
+        let is_ssl_disabled = url.sslmode.as_deref() == Some("disable");
 
-        // Spawn connection task
-        tokio::spawn(async move {
-            if let Err(e) = connection.await {
-                eprintln!("PostgreSQL connection error: {}", e);
+        let client = if !is_ssl_disabled {
+            let cx = TlsConnector::builder()
+                .build()
+                .map_err(|e| format!("TLS init error: {}", e))?;
+            let tls = MakeTlsConnector::new(cx);
+
+            match config.connect(tls).await {
+                Ok((c, conn)) => {
+                    tokio::spawn(async move {
+                        if let Err(e) = conn.await {
+                            eprintln!("PostgreSQL connection error: {}", e);
+                        }
+                    });
+                    c
+                }
+                Err(tls_err) => {
+                    if url.sslmode.as_deref() == Some("require")
+                        || url.provider == "Neon"
+                        || url.provider == "Supabase"
+                    {
+                        return Err(format!(
+                            "Database connection failed: {}",
+                            crate::security::redaction::redact_text(&tls_err.to_string())
+                        ));
+                    }
+                    let (c, conn) = config.connect(NoTls).await.map_err(|e| {
+                        format!(
+                            "Database connection failed: {}",
+                            crate::security::redaction::redact_text(&e.to_string())
+                        )
+                    })?;
+                    tokio::spawn(async move {
+                        if let Err(e) = conn.await {
+                            eprintln!("PostgreSQL connection error: {}", e);
+                        }
+                    });
+                    c
+                }
             }
-        });
+        } else {
+            let (c, conn) = config.connect(NoTls).await.map_err(|e| {
+                format!(
+                    "Database connection failed: {}",
+                    crate::security::redaction::redact_text(&e.to_string())
+                )
+            })?;
+            tokio::spawn(async move {
+                if let Err(e) = conn.await {
+                    eprintln!("PostgreSQL connection error: {}", e);
+                }
+            });
+            c
+        };
 
         // 1. Fetch Version
         let version_row = client
